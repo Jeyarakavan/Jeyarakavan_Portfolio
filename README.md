@@ -1,16 +1,29 @@
-# React + Vite
+# Jeyarakavan Portfolio - Deployment & Admin Setup Guide
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+## 1. Frontend Deployment (Vercel)
+- Connect this repository to **Vercel**.
+- Build command: `npm run build`
+- Output directory: `dist`
+- Framework preset: `Vite`
 
-Currently, two official plugins are available:
+## 2. Cloud Database Setup (Neon PostgreSQL / PlanetScale / MySQL)
+- Create a free cloud database on **[Neon.tech](https://neon.tech)** (PostgreSQL) or **PlanetScale / Aiven**.
+- Execute the SQL script inside `public/admin/schema.sql` on your cloud database to set up tables.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 3. Admin Backend Deployment (Railway / Render / Any PHP Host)
+- Host the `admin/` PHP folder on **[Railway.app](https://railway.app)**, **Render**, or any PHP web hosting provider (cPanel, Hostinger, etc.).
+- Set environment variables on your PHP server:
+  - `DB_DRIVER` = `pgsql` (or `mysql`)
+  - `DB_HOST` = `<your-cloud-db-host>`
+  - `DB_PORT` = `5432`
+  - `DB_NAME` = `<your-db-name>`
+  - `DB_USER` = `<your-db-user>`
+  - `DB_PASS` = `<your-db-password>`
+  - `ADMIN_PASSWORD_HASH` = (optional hash for custom admin password)
 
-## React Compiler
+## 4. Vercel Environment Variable
+- On Vercel, set `VITE_API_BASE` to your hosted PHP API URL (e.g. `https://portfolio-backend.up.railway.app/admin`).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+## 5. Contact Form Email Forwarding
+- Messages submitted through the contact form are stored in the Admin Inbox (`/admin/dashboard.php?tab=messages`).
+- PHP automatically forwards copy to **jeyagandan74@gmail.com**.
