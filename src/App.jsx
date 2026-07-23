@@ -1,7 +1,9 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import { Mail, MapPin, Phone, Send, Download, GraduationCap, Award, ExternalLink, ChevronDown, Star, FileText, X, Eye, Menu, ArrowRight, MessageSquare } from 'lucide-react';
-import { StarBackground, ProgrammerScene, ProjectCanvas, Hero3DRings } from './components/Three3D';
-import SkillGlobe from './components/SkillGlobe';
+import { StarBackground } from './components/Three3D';
+const ProgrammerScene = lazy(() => import('./components/Three3D').then(m => ({ default: m.ProgrammerScene })));
+const ProjectCanvas   = lazy(() => import('./components/Three3D').then(m => ({ default: m.ProjectCanvas })));
+const SkillGlobe      = lazy(() => import('./components/SkillGlobe'));
 import Preloader from './components/Preloader';
 import profilePhoto from './assets/profile.jpg';
 
@@ -213,42 +215,59 @@ export default function App() {
   const [darkMode, setDarkMode] = useState(true);
   const [navCompact, setNavCompact] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
-  const [cursorPos, setCursorPos] = useState({ x: -100, y: -100 });
-  const [cursorRing, setCursorRing] = useState({ x: -100, y: -100 });
-  const [cursorHover, setCursorHover] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [achievTab, setAchievTab] = useState('awards');
   const [lightboxSrc, setLightboxSrc] = useState(null);
   const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
   const [formStatus, setFormStatus] = useState('');
   const [formLoading, setFormLoading] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [typewriterText, setTypewriterText] = useState('');
+  const [projectFilter, setProjectFilter] = useState('All');
+
+  // Cursor refs — direct DOM mutation, zero React re-renders
+  const dotRef = useRef(null);
+  const ringRef = useRef(null);
 
   useEffect(() => {
     document.body.className = darkMode ? '' : 'light';
   }, [darkMode]);
 
+  // Smooth cursor — pure DOM, no React state
   useEffect(() => {
+    let mouse = { x: -200, y: -200 };
+    let ring  = { x: -200, y: -200 };
     let raf;
-    let target = { x: -100, y: -100 };
-    let ring = { x: -100, y: -100 };
-    const moveCursor = (e) => {
-      target = { x: e.clientX, y: e.clientY };
-      setCursorPos({ x: e.clientX, y: e.clientY });
+
+    const onMove = (e) => {
+      mouse.x = e.clientX;
+      mouse.y = e.clientY;
+      if (dotRef.current) {
+        dotRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+      }
     };
-    const animateRing = () => {
-      ring.x += (target.x - ring.x) * 0.22;
-      ring.y += (target.y - ring.y) * 0.22;
-      setCursorRing({ x: ring.x, y: ring.y });
-      raf = requestAnimationFrame(animateRing);
+
+    const animate = () => {
+      ring.x += (mouse.x - ring.x) * 0.14;
+      ring.y += (mouse.y - ring.y) * 0.14;
+      if (ringRef.current) {
+        ringRef.current.style.transform = `translate(${ring.x}px, ${ring.y}px)`;
+      }
+      raf = requestAnimationFrame(animate);
     };
-    window.addEventListener('mousemove', moveCursor);
-    raf = requestAnimationFrame(animateRing);
-    return () => { window.removeEventListener('mousemove', moveCursor); cancelAnimationFrame(raf); };
+
+    window.addEventListener('mousemove', onMove, { passive: true });
+    raf = requestAnimationFrame(animate);
+    return () => {
+      window.removeEventListener('mousemove', onMove);
+      cancelAnimationFrame(raf);
+    };
   }, []);
 
+  // Hover state for cursor scale via class
   useEffect(() => {
-    const on = () => { setCursorHover(true); document.body.classList.add('cursor-hover'); };
-    const off = () => { setCursorHover(false); document.body.classList.remove('cursor-hover'); };
+    const on  = () => document.body.classList.add('cursor-hover');
+    const off = () => document.body.classList.remove('cursor-hover');
     const targets = document.querySelectorAll('a,button,input,textarea,.skill-tile,.proj-card,.contact-card,.achievement-card,.edu-card,.cert-card');
     targets.forEach(t => { t.addEventListener('mouseenter', on); t.addEventListener('mouseleave', off); });
     return () => targets.forEach(t => { t.removeEventListener('mouseenter', on); t.removeEventListener('mouseleave', off); });
@@ -257,6 +276,8 @@ export default function App() {
   useEffect(() => {
     const onScroll = () => {
       setNavCompact(window.scrollY > 60);
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0);
       const sections = document.querySelectorAll('section[id]');
       sections.forEach(s => {
         if (window.scrollY >= s.offsetTop - 200) setActiveSection(s.id);
@@ -264,6 +285,43 @@ export default function App() {
     };
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
+  // Typewriter effect
+  useEffect(() => {
+    const roles = [
+      'Full Stack Developer',
+      'AI/ML Enthusiast',
+      'CS Undergraduate',
+      'Software Engineer',
+      'React & Node.js Dev',
+    ];
+    let roleIdx = 0;
+    let charIdx = 0;
+    let deleting = false;
+    let timeout;
+    const type = () => {
+      const current = roles[roleIdx];
+      if (!deleting) {
+        setTypewriterText(current.slice(0, charIdx + 1));
+        charIdx++;
+        if (charIdx === current.length) {
+          deleting = true;
+          timeout = setTimeout(type, 1800);
+          return;
+        }
+      } else {
+        setTypewriterText(current.slice(0, charIdx - 1));
+        charIdx--;
+        if (charIdx === 0) {
+          deleting = false;
+          roleIdx = (roleIdx + 1) % roles.length;
+        }
+      }
+      timeout = setTimeout(type, deleting ? 45 : 80);
+    };
+    timeout = setTimeout(type, 600);
+    return () => clearTimeout(timeout);
   }, []);
 
   useReveal();
@@ -298,10 +356,14 @@ export default function App() {
 
   return (
     <>
+      {/* Scroll Progress Bar */}
+      <div className="scroll-progress-bar" style={{ transform: `scaleX(${scrollProgress / 100})` }} />
+
       <Preloader onFinish={handleFinish} />
 
-      <div className="cursor-dot" style={{ left: cursorPos.x, top: cursorPos.y }} />
-      <div className="cursor-ring" style={{ left: cursorRing.x, top: cursorRing.y }} />
+      {/* Custom Cursor — DOM refs, no React state, no re-renders */}
+      <div ref={dotRef}  className="cursor-dot" />
+      <div ref={ringRef} className="cursor-ring" />
 
       <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
 
@@ -322,8 +384,9 @@ export default function App() {
           ))}
         </ul>
         <div className="nav-actions">
-          <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)} title="Toggle theme" aria-label="Toggle theme">
-            <div className="theme-toggle-thumb" />
+          <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)} title={darkMode ? 'Switch to Light' : 'Switch to Dark'} aria-label="Toggle theme">
+            <span className="theme-toggle-icon">{darkMode ? '🌙' : '☀️'}</span>
+            <span className="theme-toggle-label">{darkMode ? 'Dark' : 'Light'}</span>
           </button>
           <a href="/Jeyarakavan_CV.pdf" download className="btn-download">
             <Download size={13} /> CV
@@ -332,16 +395,21 @@ export default function App() {
       </nav>
 
       <section id="hero">
+        {/* Animated background blobs */}
+        <div className="hero-bg-blobs">
+          <div className="hero-blob hero-blob-1" />
+          <div className="hero-blob hero-blob-2" />
+          <div className="hero-blob hero-blob-3" />
+        </div>
         <div className="hero-inner">
           <div className="hero-text">
-            <div className="hero-photo-only-wrap">
-              <img src={profilePhoto} alt="Jeyarakavan Jeyakandan" className="hero-solo-photo" />
-            </div>
             <h1 className="hero-name">
               <span className="gradient-text">Jeyarakavan</span>
               <br />Jeyakandan
             </h1>
-            <p className="hero-title">Full Stack Developer · AI/ML Enthusiast · CS Undergraduate</p>
+            <p className="hero-typewriter">
+              {typewriterText}<span className="typewriter-cursor" />
+            </p>
             <p className="hero-desc">{CV.summary.slice(0, 230)}…</p>
             <div className="hero-cta">
               <a href="#projects" className="btn-primary">View Projects</a>
@@ -359,8 +427,12 @@ export default function App() {
               </a>
             </div>
           </div>
+          {/* Circular avatar with gradient ring */}
           <div className="hero-visual hero-visual-large">
-            <ProgrammerScene />
+            <div className="hero-avatar-wrapper">
+              <div className="hero-avatar-ring" />
+              <img src={profilePhoto} alt="Jeyarakavan Jeyakandan" className="hero-avatar-img" />
+            </div>
           </div>
         </div>
       </section>
@@ -429,7 +501,9 @@ export default function App() {
             <p className="section-desc" style={{ margin: '0 auto' }}>Drag your eyes across the globe — each orbiting tile is a technology I work with daily.</p>
             <div className="section-divider" style={{ margin: '1.5rem auto 2rem' }} />
           </div>
-          <SkillGlobe logos={logos} skills={CV.skills} />
+          <Suspense fallback={<div style={{ height: 420 }} />}>
+            <SkillGlobe logos={logos} skills={CV.skills} />
+          </Suspense>
         </div>
       </section>
 
@@ -518,8 +592,26 @@ export default function App() {
             <h2 className="section-title">Relevant <em>Projects</em></h2>
             <div className="section-divider" />
           </div>
+          {/* Project Filter Bar */}
+          <div className="projects-filter-bar reveal">
+            {['All', 'AI/ML', 'Full Stack', 'Frontend'].map(cat => (
+              <button
+                key={cat}
+                className={`filter-btn${projectFilter === cat ? ' active' : ''}`}
+                onClick={() => setProjectFilter(cat)}
+              >{cat}</button>
+            ))}
+          </div>
           <div className="projects-grid">
-            {CV.projects.map((proj, i) => (
+            {CV.projects
+              .filter(proj => {
+                if (projectFilter === 'All') return true;
+                if (projectFilter === 'AI/ML') return proj.type?.toLowerCase().includes('ai') || proj.type?.toLowerCase().includes('ml') || proj.type?.toLowerCase().includes('intelligent');
+                if (projectFilter === 'Full Stack') return proj.type?.toLowerCase().includes('full stack') || proj.type?.toLowerCase().includes('fullstack');
+                if (projectFilter === 'Frontend') return proj.type?.toLowerCase().includes('frontend') || proj.type?.toLowerCase().includes('web app');
+                return true;
+              })
+              .map((proj, i) => (
               <div className="proj-card reveal" key={proj.id || i} style={{ transitionDelay: `${i * 0.1}s` }}>
                 <div className="proj-thumb">
                   {proj.banner ? (
@@ -528,7 +620,9 @@ export default function App() {
                     <>
                       <div className={`proj-thumb-bg p${i+1}`}
                         style={{ background: `linear-gradient(135deg, rgba(${i%2?'5,15,40':'7,10,30'},0.9), rgba(10,20,60,0.8))` }} />
-                      <ProjectCanvas shape={proj.shape} color1={proj.color1 || 0x1e3a8a} color2={proj.color2 || 0x60a5fa} />
+                      <Suspense fallback={<div style={{ height: 200, background: 'var(--surface-1)', borderRadius: 8 }} />}>
+                        <ProjectCanvas shape={proj.shape} color1={proj.color1 || 0x1e3a8a} color2={proj.color2 || 0x60a5fa} />
+                      </Suspense>
                     </>
                   )}
                   <div className={`proj-badge ${proj.badgeType || 'badge-blue'}`}>{proj.badge}</div>
