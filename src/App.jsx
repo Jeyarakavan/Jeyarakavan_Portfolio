@@ -1,10 +1,9 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Mail, MapPin, Phone, Send, Download, GraduationCap, Award, ExternalLink, ChevronDown, Shield, Star, FileText, X, Eye } from 'lucide-react';
-import { StarBackground, ProgrammerScene, ProjectCanvas } from './components/Three3D';
+import { Mail, MapPin, Phone, Send, Download, GraduationCap, Award, ExternalLink, ChevronDown, Star, FileText, X, Eye, Menu, ArrowRight, MessageSquare } from 'lucide-react';
+import { StarBackground, ProgrammerScene, ProjectCanvas, Hero3DRings } from './components/Three3D';
 import SkillGlobe from './components/SkillGlobe';
+import Preloader from './components/Preloader';
 import profilePhoto from './assets/profile.jpg';
-
-const API_BASE = import.meta.env.VITE_API_BASE || '';
 
 const logos = {
   html5:    <svg viewBox="0 0 24 24"><path fill="#e34f26" d="M1.5 0h21l-1.91 21.563L11.977 24l-8.565-2.438zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157z"/></svg>,
@@ -27,6 +26,10 @@ const logos = {
   figma:    <svg viewBox="0 0 24 24"><path fill="#f24e1e" d="M5.809 24c2.065 0 3.733-1.668 3.733-3.733v-3.733H5.809C3.744 16.534 2.076 18.202 2.076 20.267S3.744 24 5.809 24z"/><path fill="#ff7262" d="M2.076 12.267c0-2.065 1.668-3.733 3.733-3.733h3.733v7.467H5.809c-2.065 0-3.733-1.668-3.733-3.734z"/><path fill="#a259ff" d="M2.076 4.8C2.076 2.736 3.744 1.068 5.809 1.068h3.733V8.55H5.809C3.744 8.55 2.076 6.864 2.076 4.8z"/><path fill="#1abcfe" d="M9.542 1.068h3.733c2.065 0 3.733 1.668 3.733 3.733S15.34 8.534 13.275 8.534H9.542V1.068z"/><path fill="#0acf83" d="M17.009 12.267c0 2.065-1.668 3.733-3.733 3.733s-3.733-1.668-3.733-3.733 1.668-3.733 3.733-3.733 3.733 1.668 3.733 3.733z"/></svg>,
   vscode:   <svg viewBox="0 0 24 24"><path fill="#007acc" d="M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.942-2.377A1.5 1.5 0 0 0 24 20.06V3.939a1.5 1.5 0 0 0-.85-1.352zm-5.146 14.861L10.826 12l7.178-5.448v10.896z"/></svg>,
   power_bi: <svg viewBox="0 0 24 24"><path fill="#f2c811" d="M0 0h24v24H0z"/><path fill="#241f21" d="M6 4h2.5v16H6zm3.5 3H12v13H9.5zm3.5 3h2.5v10H13zm3.5-5H19v15h-2.5z"/></svg>,
+  typescript:<svg viewBox="0 0 24 24"><rect width="24" height="24" fill="#3178C6"/><text x="18" y="19" fill="#FFF" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="end">TS</text></svg>,
+  tailwind: <svg viewBox="0 0 24 24" fill="none"><path d="M12.005 17.51c-3.13 0-4.914-1.57-5.353-4.71 1.884.629 3.14.314 3.768-.942-.942-.628-1.99-1.282-3.14-1.282-3.138 0-4.914 1.57-5.353 4.71 1.884-.628 3.14-.314 3.768.942.942.629 1.99 1.282 3.14 1.282 3.13 0 4.914-1.57 5.353-4.71-1.884-.629-3.14-.314-3.768.942.942.628 1.99 1.282 3.14 1.282zm5.353-8.48c-3.13 0-4.914-1.57-5.353-4.71 1.884.629 3.14.314 3.768-.942-.942-.628-1.99-1.282-3.14-1.282-3.138 0-4.914 1.57-5.353 4.71 1.884-.628 3.14-.314 3.768.942.942.629 1.99 1.282 3.14 1.282 3.13 0 4.914-1.57 5.353-4.71-1.884-.629-3.14-.314-3.768.942.942.628 1.99 1.282 3.14 1.282z" fill="#38bdf8"/></svg>,
+  netlify:  <svg viewBox="0 0 24 24" fill="none"><path d="M21.36 10.02L12.42 2.31a.63.63 0 00-.84 0L2.64 10.02a.63.63 0 00.2 1.05l3.81 1.29-1.92 5.76a.63.63 0 00.9.72l15.12-9.45a.63.63 0 00.61-.39.63.63 0 00-.22-.68z" fill="#00C7B7"/></svg>,
+  mcp:      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="#a78bfa" stroke="#c084fc" stroke-width="2"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6" stroke="#c084fc" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="2" r="1.5" fill="#c084fc"/><circle cx="12" cy="22" r="1.5" fill="#c084fc"/><circle cx="2" cy="12" r="1.5" fill="#c084fc"/><circle cx="22" cy="12" r="1.5" fill="#c084fc"/></svg>,
 };
 
 const CV = {
@@ -43,12 +46,13 @@ const CV = {
     'Frontend Development': [
       { name: 'HTML5', key: 'html5' }, { name: 'CSS3', key: 'css3' },
       { name: 'JavaScript', key: 'javascript' }, { name: 'React.js', key: 'react' },
+      { name: 'TypeScript', key: 'typescript' }, { name: 'Tailwind CSS', key: 'tailwind' },
       { name: 'Bootstrap', key: 'bootstrap' }, { name: 'Figma', key: 'figma' }
     ],
     'Backend Development': [
       { name: 'Node.js', key: 'nodejs' }, { name: 'Java', key: 'java' },
       { name: 'Python', key: 'python' }, { name: 'PHP', key: 'php' },
-      { name: 'Django', key: 'django' }
+      { name: 'Django', key: 'django' }, { name: 'Model Context Protocol (MCP)', key: 'mcp' }
     ],
     'Databases': [
       { name: 'MySQL', key: 'mysql' }, { name: 'MongoDB', key: 'mongodb' },
@@ -57,7 +61,7 @@ const CV = {
     'Tools & Platforms': [
       { name: 'Git/GitHub', key: 'git' }, { name: 'VS Code', key: 'vscode' },
       { name: 'Power BI', key: 'power_bi' }, { name: 'GitHub', key: 'github' },
-      { name: 'LinkedIn', key: 'linkedin' }
+      { name: 'LinkedIn', key: 'linkedin' }, { name: 'Netlify', key: 'netlify' }
     ]
   },
 
@@ -102,6 +106,18 @@ const CV = {
   projects: [
     {
       id: 1,
+      title: 'Kapruka AI Shopping Agent',
+      type: 'Individual Project | 2 Months',
+      desc: 'Built an AI-powered conversational shopping assistant using the Kapruka MCP (Model Context Protocol) to deliver a seamless online shopping experience. The application enables users to search products, receive AI-powered recommendations, check delivery availability, track orders, and complete the shopping journey through an intuitive chat interface. Designed with a scalable architecture that supports multiple languages, including English, Sinhala, Tamil, and Tanglish.',
+      tech: ['React', 'TypeScript', 'Tailwind CSS', 'Node.js', 'AI APIs', 'Kapruka MCP', 'Git', 'GitHub', 'Netlify'],
+      badge: 'AI / E-Commerce', badgeType: 'badge-blue',
+      github: 'https://github.com/Jeyarakavan',
+      demo: '',
+      banner: 'kapruka_genie.png',
+      shape: 'icosa', color1: 0x4f46e5, color2: 0x06b6d4
+    },
+    {
+      id: 2,
       title: 'AI Receptionist System',
       type: 'Final Year Project | Group',
       desc: 'Full stack AI-powered receptionist system with React frontend and Django REST backend, integrated with a multi-agent architecture for appointment booking, patient coordination, and automated data handling.',
@@ -109,11 +125,11 @@ const CV = {
       badge: 'AI / Full Stack', badgeType: 'badge-blue',
       github: 'https://github.com/Jeyarakavan',
       demo: '',
-      banner: '',
+      banner: 'ai_receptionist.png',
       shape: 'torus', color1: 0x1e3a8a, color2: 0x60a5fa
     },
     {
-      id: 2,
+      id: 3,
       title: 'Patient Management System',
       type: 'Group Project | 2 Months',
       desc: 'Full stack web application using Node.js and MongoDB with a responsive Bootstrap frontend to streamline hospital record management, appointment scheduling, and staff coordination.',
@@ -125,7 +141,7 @@ const CV = {
       shape: 'icosa', color1: 0x0e7490, color2: 0x06b6d4
     },
     {
-      id: 3,
+      id: 4,
       title: 'CSE Stock Analysis Android App',
       type: 'Group Project | 2 Months',
       desc: 'Full-featured Android application integrating REST APIs and SQLite to collect, store, and visualise Colombo Stock Exchange data including financial ratios, price trends, and technical indicators.',
@@ -137,7 +153,7 @@ const CV = {
       shape: 'box', color1: 0x4c1d95, color2: 0x7c3aed
     },
     {
-      id: 4,
+      id: 5,
       title: 'FastTrack Logistics Automation',
       type: 'Individual Project',
       desc: 'Desktop application with Java Swing UI and MySQL backend to automate shipment tracking, driver assignment, and monthly reporting for a logistics company.',
@@ -193,6 +209,7 @@ const Lightbox = ({ src, onClose }) => {
 };
 
 export default function App() {
+  const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
   const [navCompact, setNavCompact] = useState(false);
   const [activeSection, setActiveSection] = useState('hero');
@@ -206,30 +223,9 @@ export default function App() {
   const [formStatus, setFormStatus] = useState('');
   const [formLoading, setFormLoading] = useState(false);
 
-  const [dynExperience, setDynExperience] = useState(CV.experience);
-  const [dynProjects, setDynProjects] = useState(CV.projects);
-  const [dynSkills, setDynSkills] = useState(CV.skills);
-  const [dynAchievements, setDynAchievements] = useState(CV.achievements);
-
   useEffect(() => {
     document.body.className = darkMode ? '' : 'light';
   }, [darkMode]);
-
-  useEffect(() => {
-    if (!API_BASE) return;
-    const load = async (endpoint, setter) => {
-      try {
-        const res = await fetch(`${API_BASE}${endpoint}`);
-        if (res.ok) {
-          const data = await res.json();
-          if (data.success && data.data) setter(data.data);
-        }
-      } catch (e) {}
-    };
-    load('/api/experience.php', setDynExperience);
-    load('/api/projects.php', setDynProjects);
-    load('/api/achievements.php', setDynAchievements);
-  }, []);
 
   useEffect(() => {
     let raf;
@@ -286,35 +282,24 @@ export default function App() {
     e.preventDefault();
     setFormLoading(true);
     setFormStatus('');
-    try {
-      if (API_BASE) {
-        const res = await fetch(`${API_BASE}/api/contact.php`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(formData)
-        });
-        const data = await res.json();
-        if (data.success) {
-          setFormStatus('success');
-          setFormData({ name: '', email: '', subject: '', message: '' });
-        } else {
-          setFormStatus('error');
-        }
-      } else {
-        setFormStatus('success');
-        setFormData({ name: '', email: '', subject: '', message: '' });
-      }
-    } catch {
-      setFormStatus('error');
-    }
-    setFormLoading(false);
+    setTimeout(() => {
+      setFormStatus('success');
+      setFormData({ name: '', email: '', subject: '', message: '' });
+      setFormLoading(false);
+    }, 800);
   };
 
-  const awards = dynAchievements.filter(a => a.type !== 'certification');
-  const certs = dynAchievements.filter(a => a.type === 'certification');
+  const handleFinish = useCallback(() => {
+    setLoading(false);
+  }, []);
+
+  const awards = CV.achievements.filter(a => a.type !== 'certification');
+  const certs = CV.achievements.filter(a => a.type === 'certification');
 
   return (
     <>
+      <Preloader onFinish={handleFinish} />
+
       <div className="cursor-dot" style={{ left: cursorPos.x, top: cursorPos.y }} />
       <div className="cursor-ring" style={{ left: cursorRing.x, top: cursorRing.y }} />
 
@@ -342,9 +327,6 @@ export default function App() {
           </button>
           <a href="/Jeyarakavan_CV.pdf" download className="btn-download">
             <Download size={13} /> CV
-          </a>
-          <a href="/admin/index.php" className="btn-admin-login" title="Admin Login">
-            <Shield size={13} /> Admin Login
           </a>
         </div>
       </nav>
@@ -447,7 +429,7 @@ export default function App() {
             <p className="section-desc" style={{ margin: '0 auto' }}>Drag your eyes across the globe — each orbiting tile is a technology I work with daily.</p>
             <div className="section-divider" style={{ margin: '1.5rem auto 2rem' }} />
           </div>
-          <SkillGlobe logos={logos} skills={dynSkills} />
+          <SkillGlobe logos={logos} skills={CV.skills} />
         </div>
       </section>
 
@@ -459,7 +441,7 @@ export default function App() {
             <div className="section-divider" />
           </div>
           <div className="exp-timeline">
-            {dynExperience.map((exp, i) => (
+            {CV.experience.map((exp, i) => (
               <div className="exp-item reveal" key={exp.id || i} style={{ transitionDelay: `${i * 0.1}s` }}>
                 <div className="exp-dot" />
                 <div className="exp-period">{exp.period}</div>
@@ -537,11 +519,11 @@ export default function App() {
             <div className="section-divider" />
           </div>
           <div className="projects-grid">
-            {dynProjects.map((proj, i) => (
+            {CV.projects.map((proj, i) => (
               <div className="proj-card reveal" key={proj.id || i} style={{ transitionDelay: `${i * 0.1}s` }}>
                 <div className="proj-thumb">
                   {proj.banner ? (
-                    <img src={`${API_BASE}/uploads/${proj.banner}`} alt={proj.title} className="proj-banner-img" />
+                    <img src={`/uploads/${proj.banner}`} alt={proj.title} className="proj-banner-img" />
                   ) : (
                     <>
                       <div className={`proj-thumb-bg p${i+1}`}
@@ -620,12 +602,12 @@ export default function App() {
           {achievTab === 'certs' && (
             <div className="certs-grid" style={{ marginTop: '2rem' }}>
               {certs.length === 0 ? (
-                <div className="certs-empty">No certifications added yet. Add them via the Admin Dashboard.</div>
+                <div className="certs-empty">No certifications added yet.</div>
               ) : certs.map((c, i) => (
                 <div className="cert-card reveal" key={c.id || i}>
                   {c.certificate_image && (
-                    <div className="cert-img-wrap" onClick={() => setLightboxSrc(`${API_BASE}/uploads/${c.certificate_image}`)}>
-                      <img src={`${API_BASE}/uploads/${c.certificate_image}`} alt={c.title} className="cert-img" />
+                    <div className="cert-img-wrap" onClick={() => setLightboxSrc(`/uploads/${c.certificate_image}`)}>
+                      <img src={`/uploads/${c.certificate_image}`} alt={c.title} className="cert-img" />
                       <div className="cert-img-overlay"><Eye size={18} /></div>
                     </div>
                   )}
@@ -789,9 +771,6 @@ export default function App() {
 
         <div className="footer-bottom">
           <p className="footer-copy">© 2026 Jeyarakavan Jeyakandan · Full Stack Developer · Jaffna, Sri Lanka</p>
-          <a href="/admin/index.php" className="footer-admin-link" title="Admin">
-            <Shield size={10} />
-          </a>
         </div>
       </footer>
     </>

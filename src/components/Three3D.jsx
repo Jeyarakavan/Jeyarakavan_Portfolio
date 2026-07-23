@@ -154,3 +154,92 @@ export const ProjectCanvas = ({ color1 = 0x1e3a8a, color2 = 0x06b6d4, shape = 't
 };
 
 export default StarBackground;
+
+export const Hero3DRings = () => {
+  const canvasRef = useRef(null);
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const w = canvas.clientWidth || 300;
+    const h = canvas.clientHeight || 300;
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setSize(w, h);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, w / h, 0.1, 100);
+    camera.position.z = 10;
+
+    // Cyan Torus
+    const cyanGeo = new THREE.TorusGeometry(2.2, 0.08, 32, 100);
+    const cyanMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff, transparent: true, opacity: 0.9 });
+    const cyanRing = new THREE.Mesh(cyanGeo, cyanMat);
+    cyanRing.rotation.x = Math.PI / 3;
+    scene.add(cyanRing);
+
+    // Coral/Red Torus
+    const coralGeo = new THREE.TorusGeometry(1.2, 0.06, 32, 100);
+    const coralMat = new THREE.MeshBasicMaterial({ color: 0xff5a5f, transparent: true, opacity: 0.95 });
+    const coralRing = new THREE.Mesh(coralGeo, coralMat);
+    coralRing.position.set(0.5, 0.5, 0.2);
+    coralRing.rotation.y = Math.PI / 4;
+    scene.add(coralRing);
+
+    // Cyan Solid Floating Dot
+    const dotGeo = new THREE.SphereGeometry(0.5, 32, 32);
+    const dotMat = new THREE.MeshBasicMaterial({ color: 0x00e5ff });
+    const cyanDot = new THREE.Mesh(dotGeo, dotMat);
+    cyanDot.position.set(3, -1, -1);
+    scene.add(cyanDot);
+
+    let mouseX = 0, mouseY = 0;
+    const handleMouseMove = (e) => {
+      mouseX = (e.clientX / window.innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / window.innerHeight - 0.5) * 2;
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+
+    const handleResize = () => {
+      const nw = canvas.clientWidth || 300;
+      const nh = canvas.clientHeight || 300;
+      camera.aspect = nw / nh;
+      camera.updateProjectionMatrix();
+      renderer.setSize(nw, nh);
+    };
+    window.addEventListener('resize', handleResize);
+
+    let reqId, clock = new THREE.Clock();
+    const animate = () => {
+      reqId = requestAnimationFrame(animate);
+      const elapsedTime = clock.getElapsedTime();
+
+      cyanRing.rotation.z = elapsedTime * 0.3;
+      cyanRing.rotation.y = elapsedTime * 0.2;
+      coralRing.rotation.z = -elapsedTime * 0.4;
+      coralRing.rotation.x = elapsedTime * 0.3;
+
+      cyanDot.position.y = -1 + Math.sin(elapsedTime * 1.5) * 0.3;
+      cyanDot.position.x = 3 + Math.cos(elapsedTime * 1.2) * 0.2;
+
+      camera.position.x += (mouseX * 1.5 - camera.position.x) * 0.05;
+      camera.position.y += (-mouseY * 1.5 - camera.position.y) * 0.05;
+      camera.lookAt(scene.position);
+
+      renderer.render(scene, camera);
+    };
+    animate();
+
+    return () => {
+      cancelAnimationFrame(reqId);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', handleResize);
+      cyanGeo.dispose(); cyanMat.dispose();
+      coralGeo.dispose(); coralMat.dispose();
+      dotGeo.dispose(); dotMat.dispose();
+      renderer.dispose();
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="hero-3d-rings-canvas" />;
+};
+
