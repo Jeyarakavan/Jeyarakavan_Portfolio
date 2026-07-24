@@ -34,10 +34,13 @@ const logos = {
   mcp:      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="4" fill="#a78bfa" stroke="#c084fc" stroke-width="2"/><path d="M12 2v6M12 16v6M2 12h6M16 12h6" stroke="#c084fc" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="2" r="1.5" fill="#c084fc"/><circle cx="12" cy="22" r="1.5" fill="#c084fc"/><circle cx="2" cy="12" r="1.5" fill="#c084fc"/><circle cx="22" cy="12" r="1.5" fill="#c084fc"/></svg>,
 };
 
+const CV_PDF = '/Jeyarakavan_SoftwareEngineering_CV.pdf';
+const CONTACT_EMAIL = 'jeyagandan74@gmail.com';
+
 const CV = {
   name: 'Jeyarakavan Jeyakandan',
   role: 'Software Engineering | Full Stack Developer | AI/ML & Data Science Enthusiast',
-  email: 'jeyagandan74@gmail.com',
+  email: CONTACT_EMAIL,
   phone: '+94 74 004 5835',
   location: 'Jaffna, Sri Lanka',
   linkedin: 'https://www.linkedin.com/in/jeyarakavan-jeyakandan',
@@ -224,6 +227,7 @@ export default function App() {
   const [scrollProgress, setScrollProgress] = useState(0);
   const [typewriterText, setTypewriterText] = useState('');
   const [projectFilter, setProjectFilter] = useState('All');
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   // Cursor refs — direct DOM mutation, zero React re-renders
   const dotRef = useRef(null);
@@ -276,6 +280,7 @@ export default function App() {
   useEffect(() => {
     const onScroll = () => {
       setNavCompact(window.scrollY > 60);
+      setShowBackToTop(window.scrollY > 500);
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       setScrollProgress(docHeight > 0 ? (window.scrollY / docHeight) * 100 : 0);
       const sections = document.querySelectorAll('section[id]');
@@ -286,6 +291,11 @@ export default function App() {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileNavOpen ? 'hidden' : '';
+    return () => { document.body.style.overflow = ''; };
+  }, [mobileNavOpen]);
 
   // Typewriter effect
   useEffect(() => {
@@ -340,11 +350,35 @@ export default function App() {
     e.preventDefault();
     setFormLoading(true);
     setFormStatus('');
-    setTimeout(() => {
-      setFormStatus('success');
-      setFormData({ name: '', email: '', subject: '', message: '' });
+    try {
+      const response = await fetch(`https://formsubmit.co/ajax/${CONTACT_EMAIL}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          subject: formData.subject,
+          message: formData.message,
+          _subject: `Portfolio Contact: ${formData.subject}`,
+          _template: 'table',
+          _captcha: 'false',
+        }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setFormStatus('success');
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      } else {
+        setFormStatus('error');
+      }
+    } catch {
+      setFormStatus('error');
+    } finally {
       setFormLoading(false);
-    }, 800);
+    }
   };
 
   const handleFinish = useCallback(() => {
@@ -374,10 +408,14 @@ export default function App() {
         <a href="#hero" className="nav-brand">
           <span className="nav-name">Jeyarakavan Jeyakandan</span>
         </a>
-        <ul className="nav-links">
+        <ul className={`nav-links${mobileNavOpen ? ' open' : ''}`}>
           {navItems.map(item => (
             <li key={item.id}>
-              <a href={`#${item.id}`} className={activeSection === item.id ? 'active' : ''}>
+              <a
+                href={`#${item.id}`}
+                className={activeSection === item.id ? 'active' : ''}
+                onClick={() => setMobileNavOpen(false)}
+              >
                 {item.label}
               </a>
             </li>
@@ -388,11 +426,23 @@ export default function App() {
             <span className="theme-toggle-icon">{darkMode ? '🌙' : '☀️'}</span>
             <span className="theme-toggle-label">{darkMode ? 'Dark' : 'Light'}</span>
           </button>
-          <a href="/Jeyarakavan_CV.pdf" download className="btn-download">
+          <a href={CV_PDF} download="Jeyarakavan_SoftwareEngineering_CV.pdf" className="btn-download">
             <Download size={13} /> CV
           </a>
+          <button
+            className={`nav-menu-toggle${mobileNavOpen ? ' open' : ''}`}
+            onClick={() => setMobileNavOpen(v => !v)}
+            aria-label={mobileNavOpen ? 'Close menu' : 'Open menu'}
+            aria-expanded={mobileNavOpen}
+          >
+            {mobileNavOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
       </nav>
+
+      {mobileNavOpen && (
+        <div className="nav-mobile-overlay" onClick={() => setMobileNavOpen(false)} aria-hidden="true" />
+      )}
 
       <section id="hero">
         {/* Animated background blobs */}
@@ -414,8 +464,8 @@ export default function App() {
             <div className="hero-cta">
               <a href="#projects" className="btn-primary">View Projects</a>
               <a href="#contact" className="btn-outline">Get In Touch</a>
-              <a href="/Jeyarakavan_CV.pdf" download className="btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}>
-                <Download size={14} /> CV
+              <a href={CV_PDF} download="Jeyarakavan_SoftwareEngineering_CV.pdf" className="btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}>
+                <Download size={14} /> Download CV
               </a>
             </div>
             <div className="hero-socials">
@@ -472,7 +522,7 @@ export default function App() {
                     <div className="stat-label">Years Coding</div>
                   </div>
                   <div className="stat-box">
-                    <div className="stat-num">4+</div>
+                    <div className="stat-num">5+</div>
                     <div className="stat-label">Projects</div>
                   </div>
                   <div className="stat-box">
@@ -533,15 +583,15 @@ export default function App() {
                 {exp.photos && exp.photos.length > 0 && (
                   <div className="exp-attachments">
                     {exp.photos.map((ph, pi) => (
-                      <img key={pi} src={`${API_BASE}/uploads/${ph}`} alt="attachment"
-                        className="exp-thumb" onClick={() => setLightboxSrc(`${API_BASE}/uploads/${ph}`)} />
+                      <img key={pi} src={`/uploads/${ph}`} alt="attachment"
+                        className="exp-thumb" onClick={() => setLightboxSrc(`/uploads/${ph}`)} />
                     ))}
                   </div>
                 )}
                 {exp.documents && exp.documents.length > 0 && (
                   <div className="exp-docs">
                     {exp.documents.map((doc, di) => (
-                      <a key={di} href={`${API_BASE}/uploads/${doc}`} target="_blank" rel="noopener noreferrer" className="exp-doc-link">
+                      <a key={di} href={`/uploads/${doc}`} target="_blank" rel="noopener noreferrer" className="exp-doc-link">
                         <FileText size={13} /> {doc}
                       </a>
                     ))}
@@ -808,7 +858,7 @@ export default function App() {
                 <div className="form-success">✅ Message sent! I'll get back to you soon.</div>
               )}
               {formStatus === 'error' && (
-                <div className="form-error">❌ Something went wrong. Please email me directly.</div>
+                <div className="form-error">❌ Something went wrong. Please email me directly at {CONTACT_EMAIL}.</div>
               )}
               <button type="submit" className="btn-send" disabled={formLoading}>
                 <Send size={15} /> {formLoading ? 'Sending…' : 'Send Message'}
@@ -859,6 +909,9 @@ export default function App() {
               <a href={`mailto:${CV.email}`} className="footer-social">
                 <Mail size={14} /> Email
               </a>
+              <a href={CV_PDF} download="Jeyarakavan_SoftwareEngineering_CV.pdf" className="footer-social">
+                <Download size={14} /> CV
+              </a>
             </div>
           </div>
         </div>
@@ -867,6 +920,26 @@ export default function App() {
           <p className="footer-copy">© 2026 Jeyarakavan Jeyakandan · Full Stack Developer · Jaffna, Sri Lanka</p>
         </div>
       </footer>
+
+      <a
+        href="#contact"
+        className="floating-contact-btn"
+        aria-label="Get in touch"
+        title="Get in touch"
+      >
+        <MessageSquare size={20} />
+      </a>
+
+      {showBackToTop && (
+        <button
+          type="button"
+          className="back-to-top"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          aria-label="Back to top"
+        >
+          <ChevronDown size={18} style={{ transform: 'rotate(180deg)' }} />
+        </button>
+      )}
     </>
   );
 }
