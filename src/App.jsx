@@ -5,6 +5,7 @@ const ProgrammerScene = lazy(() => import('./components/Three3D').then(m => ({ d
 const ProjectCanvas   = lazy(() => import('./components/Three3D').then(m => ({ default: m.ProjectCanvas })));
 const SkillGlobe      = lazy(() => import('./components/SkillGlobe'));
 import Preloader from './components/Preloader';
+import AIChatBot from './components/AIChatBot';
 import profilePhoto from './assets/profile_new.jpg';
 import bedfordshireLogo from './assets/bedfordshire_logo.png';
 import scuLogo from './assets/scu_logo.png';
@@ -383,6 +384,7 @@ export default function App() {
 
   const navItems = [
     { id: 'about', label: 'About' },
+    { id: 'ai-assistant', label: 'AI Assistant' },
     { id: 'skills', label: 'Skills' },
     { id: 'experience', label: 'Experience' },
     { id: 'education', label: 'Education' },
@@ -508,6 +510,9 @@ export default function App() {
             <p className="hero-desc">{CV.summary.slice(0, 240)}…</p>
             <div className="hero-cta">
               <a href="#projects" className="btn-primary">View Projects</a>
+              <a href="#ai-assistant" className="btn-ai-cta">
+                <Sparkles size={14} /> Ask AI Assistant
+              </a>
               <a href="#contact" className="btn-outline">Get In Touch</a>
               <a href={CV_PDF} download="Jeyarakavan_SoftwareEngineering_CV.pdf" className="btn-outline" style={{ display: 'inline-flex', alignItems: 'center', gap: '0.45rem' }}>
                 <Download size={14} /> Download CV
@@ -528,6 +533,23 @@ export default function App() {
               <div className="hero-avatar-ring" />
               <img src={profilePhoto} alt="Jeyarakavan Jeyakandan" className="hero-avatar-img" />
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* AI Portfolio Assistant Section directly under Profile */}
+      <section id="ai-assistant" style={{ padding: '3.5rem 5vw 2rem' }}>
+        <div className="section-inner">
+          <div className="reveal" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+            <span className="section-label" style={{ justifyContent: 'center' }}>// Interactive AI</span>
+            <h2 className="section-title">Ask My <em>AI Assistant</em></h2>
+            <p className="section-desc" style={{ margin: '0 auto', maxWidth: '640px' }}>
+              Have questions about my technical background, projects, internship experience, or skills? Ask my custom AI assistant below!
+            </p>
+            <div className="section-divider" style={{ margin: '1.25rem auto 0' }} />
+          </div>
+          <div className="reveal">
+            <AIChatBot embedded={true} />
           </div>
         </div>
       </section>
