@@ -1,11 +1,13 @@
-import React, { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
-import { Mail, MapPin, Phone, Send, Download, GraduationCap, Award, ExternalLink, ChevronDown, Star, FileText, X, Eye, Menu, ArrowRight, MessageSquare } from 'lucide-react';
+import React, { useState, useEffect, useCallback, lazy, Suspense } from 'react';
+import { Mail, MapPin, Phone, Send, Download, GraduationCap, Award, ExternalLink, ChevronDown, Star, FileText, X, Eye, Menu, ArrowRight, MessageSquare, BookOpen, Calendar, Clock, Search, Tag, Sparkles } from 'lucide-react';
 import { StarBackground } from './components/Three3D';
 const ProgrammerScene = lazy(() => import('./components/Three3D').then(m => ({ default: m.ProgrammerScene })));
 const ProjectCanvas   = lazy(() => import('./components/Three3D').then(m => ({ default: m.ProjectCanvas })));
 const SkillGlobe      = lazy(() => import('./components/SkillGlobe'));
 import Preloader from './components/Preloader';
-import profilePhoto from './assets/profile.jpg';
+import profilePhoto from './assets/profile_new.jpg';
+import bedfordshireLogo from './assets/bedfordshire_logo.png';
+import scuLogo from './assets/scu_logo.png';
 
 const logos = {
   html5:    <svg viewBox="0 0 24 24"><path fill="#e34f26" d="M1.5 0h21l-1.91 21.563L11.977 24l-8.565-2.438zm7.031 9.75l-.232-2.718 10.059.003.23-2.622L5.412 4.41l.698 8.01h9.126l-.326 3.426-2.91.804-2.955-.81-.188-2.11H6.248l.33 4.171L12 19.351l5.379-1.443.744-8.157z"/></svg>,
@@ -39,13 +41,13 @@ const CONTACT_EMAIL = 'jeyagandan74@gmail.com';
 
 const CV = {
   name: 'Jeyarakavan Jeyakandan',
-  role: 'Software Engineering | Full Stack Developer | AI/ML & Data Science Enthusiast',
+  role: 'Software Engineering | Full Stack Developer | Client-Focused Technologist',
   email: CONTACT_EMAIL,
   phone: '+94 74 004 5835',
   location: 'Jaffna, Sri Lanka',
   linkedin: 'https://www.linkedin.com/in/jeyarakavan-jeyakandan',
   github: 'https://github.com/Jeyarakavan',
-  summary: 'Motivated Computer Science undergraduate at SLIIT Northern Uni, specializing in full stack web development, software engineering, and AI/ML. Experienced in building end-to-end applications using React, Node.js, Django, and Java, with hands-on exposure to both relational and non-relational databases. Passionate about data-driven solutions and machine learning applications, with proven ability to take software from requirements to deployment independently and within teams.',
+  summary: 'Final-year Computer Science undergraduate with hands-on full-stack development experience and a strong technical foundation in HTML, CSS, JavaScript, React, Node.js, and Python. Skilled at translating client requirements into working solutions, leading projects from stakeholder requirement gathering to deployment. Proficient in web applications, database architecture, AI integration, and 3D web graphics.',
 
   skills: {
     'Frontend Development': [
@@ -61,12 +63,17 @@ const CV = {
     ],
     'Databases': [
       { name: 'MySQL', key: 'mysql' }, { name: 'MongoDB', key: 'mongodb' },
-      { name: 'SQLite', key: 'sqlite' }, { name: 'Firebase', key: 'firebase' }
+      { name: 'PostgreSQL', key: 'sqlite' }, { name: 'SQLite', key: 'sqlite' },
+      { name: 'Firebase', key: 'firebase' }
+    ],
+    '3D Animation & Graphics': [
+      { name: 'Three.js', key: 'react' }, { name: 'WebGL Canvas', key: 'html5' },
+      { name: 'CSS Keyframes', key: 'css3' }, { name: 'Interactive UI', key: 'figma' }
     ],
     'Tools & Platforms': [
       { name: 'Git/GitHub', key: 'git' }, { name: 'VS Code', key: 'vscode' },
       { name: 'Power BI', key: 'power_bi' }, { name: 'GitHub', key: 'github' },
-      { name: 'LinkedIn', key: 'linkedin' }, { name: 'Netlify', key: 'netlify' }
+      { name: 'Netlify', key: 'netlify' }
     ]
   },
 
@@ -74,8 +81,8 @@ const CV = {
     {
       id: 1,
       period: '2025 Nov — 2026 May',
-      role: 'Intern Software Engineer',
-      company: 'HABB (PVT) Ltd',
+      role: 'Software Engineer Intern',
+      company: 'HABB (Pvt) Ltd',
       type: 'Internship',
       bullets: [
         'Developed and maintained web application features based on stakeholder requirements, contributing to both frontend and backend implementation using modern frameworks.',
@@ -89,7 +96,7 @@ const CV = {
     {
       id: 2,
       period: '2022 Sep — 2023 Mar',
-      role: 'Internship – IT Technician',
+      role: 'IT Technician Intern',
       company: 'University of Jaffna – General Administration Department',
       type: 'Internship',
       bullets: [
@@ -103,18 +110,42 @@ const CV = {
   ],
 
   education: [
-    { degree: 'BSc (Hons) in Computer Science', institution: 'SLIIT Northern Uni', year: '2024 – 2027 (Expected)' },
-    { degree: 'NVQ Level 4 Information Technology', institution: 'College of Technology Jaffna', year: 'January 2022 – December 2022' },
-    { degree: 'Advance Level in Engineering Technology', institution: 'J/ Kokuvil Hindu College', year: '2011 – 2021' }
+    {
+      degree: 'BSc (Hons) in Computer Science',
+      institution: 'University of Bedfordshire, UK',
+      campus: '(delivered at SLIIT Northern Uni, Jaffna)',
+      year: '2024 – 2027 (Expected)',
+      logo: bedfordshireLogo,
+      desc: 'Final-year Computer Science degree focusing on software engineering, web architectures, AI/ML, and intelligent systems.'
+    },
+    {
+      degree: 'Higher Diploma in IT',
+      institution: 'Southern Campus (SCU)',
+      year: 'Jun 2024 – Jun 2026',
+      logo: scuLogo,
+      desc: 'Completed Higher Diploma in Information Technology covering web development, database systems, and software engineering principles.'
+    },
+    {
+      degree: 'NVQ Level 4 – Information Technology',
+      institution: 'College of Technology, Jaffna',
+      year: 'Jan 2022 – Dec 2022',
+      desc: 'Core IT qualification in computer software maintenance, networking, and system administration.'
+    },
+    {
+      degree: 'Advanced Level – Engineering Technology',
+      institution: 'J/ Kokuvil Hindu College',
+      year: '2011 – 2021',
+      desc: 'G.C.E. Advanced Level in Engineering Technology and physical science foundations.'
+    }
   ],
 
   projects: [
     {
       id: 1,
       title: 'Kapruka AI Shopping Agent',
-      type: 'Individual Project | 2 Months',
-      desc: 'Built an AI-powered conversational shopping assistant using the Kapruka MCP (Model Context Protocol) to deliver a seamless online shopping experience. The application enables users to search products, receive AI-powered recommendations, check delivery availability, track orders, and complete the shopping journey through an intuitive chat interface. Designed with a scalable architecture that supports multiple languages, including English, Sinhala, Tamil, and Tanglish.',
-      tech: ['React', 'TypeScript', 'Tailwind CSS', 'Node.js', 'AI APIs', 'Kapruka MCP', 'Git', 'GitHub', 'Netlify'],
+      type: 'Kapruka Agent Challenge | Jun – Jul 2026',
+      desc: 'Built an AI-powered conversational shopping assistant integrating the Kapruka MCP (Model Context Protocol) to enable natural-language product search, AI-driven recommendations, delivery availability checks, and order tracking through a chat interface. Built with React, TypeScript, Tailwind CSS, and Node.js; deployed on Netlify with certificate from Kapruka Holdings PLC.',
+      tech: ['React', 'TypeScript', 'Tailwind CSS', 'Node.js', 'Kapruka MCP', 'AI APIs', 'Netlify'],
       badge: 'AI / E-Commerce', badgeType: 'badge-blue',
       github: 'https://github.com/Jeyarakavan',
       demo: '',
@@ -123,59 +154,36 @@ const CV = {
     },
     {
       id: 2,
+      title: 'CivicGuard AI — Civic Hazard Image Classifier',
+      type: 'Group Project | Machine Learning',
+      desc: 'Built an image classification system to detect five civic hazard categories (blocked drains, sewage overflow, road damage, fallen trees, water logging) using MobileNetV2 transfer learning on Kaggle Notebooks. Implemented two-phase fine-tuning, class weighting for imbalanced categories, and early stopping to achieve high accuracy.',
+      tech: ['Python', 'MobileNetV2', 'TensorFlow', 'Kaggle', 'Transfer Learning', 'Computer Vision'],
+      badge: 'AI / Computer Vision', badgeType: 'badge-cyan',
+      github: 'https://github.com/Jeyarakavan',
+      demo: '',
+      banner: '',
+      shape: 'octahedron', color1: 0x059669, color2: 0x10b981
+    },
+    {
+      id: 3,
       title: 'AI Receptionist System',
-      type: 'Final Year Project | Group',
-      desc: 'Full stack AI-powered receptionist system with React frontend and Django REST backend, integrated with a multi-agent architecture for appointment booking, patient coordination, and automated data handling.',
-      tech: ['React', 'Django', 'PostgreSQL', 'MongoDB', 'Multi-Agent AI'],
+      type: 'Final Year Project | Team Lead | Group Project',
+      desc: 'Designed and developed a full-stack AI-powered receptionist system with a React frontend and Django REST backend, integrated with a multi-agent architecture for appointment booking, patient coordination, and automated data handling.',
+      tech: ['React', 'Django', 'PostgreSQL', 'MongoDB', 'Multi-Agent AI', 'REST API'],
       badge: 'AI / Full Stack', badgeType: 'badge-blue',
       github: 'https://github.com/Jeyarakavan',
       demo: '',
       banner: 'ai_receptionist.png',
       shape: 'torus', color1: 0x1e3a8a, color2: 0x60a5fa
-    },
-    {
-      id: 3,
-      title: 'Patient Management System',
-      type: 'Group Project | 2 Months',
-      desc: 'Full stack web application using Node.js and MongoDB with a responsive Bootstrap frontend to streamline hospital record management, appointment scheduling, and staff coordination.',
-      tech: ['HTML', 'Bootstrap', 'Node.js', 'MongoDB', 'REST API'],
-      badge: 'Healthcare', badgeType: 'badge-cyan',
-      github: 'https://github.com/Jeyarakavan',
-      demo: '',
-      banner: '',
-      shape: 'icosa', color1: 0x0e7490, color2: 0x06b6d4
-    },
-    {
-      id: 4,
-      title: 'CSE Stock Analysis Android App',
-      type: 'Group Project | 2 Months',
-      desc: 'Full-featured Android application integrating REST APIs and SQLite to collect, store, and visualise Colombo Stock Exchange data including financial ratios, price trends, and technical indicators.',
-      tech: ['Java', 'Kotlin', 'REST APIs', 'SQLite', 'Firebase', 'MPAndroidChart'],
-      badge: 'Android App', badgeType: 'badge-purple',
-      github: 'https://github.com/Jeyarakavan',
-      demo: '',
-      banner: '',
-      shape: 'box', color1: 0x4c1d95, color2: 0x7c3aed
-    },
-    {
-      id: 5,
-      title: 'FastTrack Logistics Automation',
-      type: 'Individual Project',
-      desc: 'Desktop application with Java Swing UI and MySQL backend to automate shipment tracking, driver assignment, and monthly reporting for a logistics company.',
-      tech: ['Java', 'Swing', 'MySQL'],
-      badge: 'Desktop App', badgeType: 'badge-teal',
-      github: 'https://github.com/Jeyarakavan',
-      demo: '',
-      banner: '',
-      shape: 'octahedron', color1: 0x134e4a, color2: 0x14b8a6
     }
   ],
 
   achievements: [
-    { id: 1, title: 'Q4US Codeart Challenge – Winners', year: '2025', type: 'award', description: '', issuer: '', certificate_image: '' },
-    { id: 2, title: 'SLIIT Codefest NETCOM – Merit Award', year: '2025', type: 'award', description: '', issuer: '', certificate_image: '' },
-    { id: 3, title: 'Marketing Video Clip Competition – Winners', year: '2025', type: 'award', description: '', issuer: '', certificate_image: '' },
-    { id: 4, title: 'SLIIT Codefest ALGOTHAN – Merit Award', year: '2024', type: 'award', description: '', issuer: '', certificate_image: '' }
+    { id: 1, title: 'Kapruka Agent Challenge (2026) — Certificate of Participation', year: '2026', type: 'award', description: 'Awarded by Kapruka Holdings PLC (KPHL) for building AI Shopping Agent', issuer: 'Kapruka Holdings PLC' },
+    { id: 2, title: 'Q4US Codeart Challenge – Winners', year: '2025', type: 'award', description: 'First place winners in UI/UX and web implementation challenge', issuer: 'Q4US' },
+    { id: 3, title: 'SLIIT Codefest NETCOM – Merit Award', year: '2025', type: 'award', description: 'Recognized for network engineering and cloud infrastructure design', issuer: 'SLIIT' },
+    { id: 4, title: 'Marketing Video Clip Competition – Winners', year: '2025', type: 'award', description: 'First place winners for promotional tech video content creation', issuer: 'SLIIT' },
+    { id: 5, title: 'SLIIT Codefest ALGOTHAN – Merit Award', year: '2024', type: 'award', description: 'Merit recognition for algorithmic problem solving under pressure', issuer: 'SLIIT' }
   ],
 
   languages: ['Tamil (Native)', 'English (Professional Proficiency)'],
@@ -187,6 +195,83 @@ const CV = {
     award: "President's Award (2019) – Awarded for exceptional community service and dedication, one of the highest honors in the Sri Lanka Scout movement."
   }
 };
+
+const BLOG_POSTS = [
+  {
+    id: 1,
+    title: 'Kapruka MCP Agent Challenge 2026: Building Conversational E-Commerce',
+    category: 'Workshops',
+    date: 'Jul 2026',
+    readTime: '4 min read',
+    summary: 'Insights and architecture breakdown from participating in the Kapruka Agent Challenge, integrating Model Context Protocol (MCP) into a full-stack React application.',
+    content: `
+      During the Kapruka Agent Challenge (Jun - Jul 2026), I designed and built an AI-powered conversational shopping assistant that connects users directly to Kapruka's online marketplace using the Model Context Protocol (MCP).
+      
+      ### Key Architectural Features:
+      - **Natural Language Product Discovery**: Users can search for items using conversational queries across English, Sinhala, Tamil, and Tanglish.
+      - **MCP Tool Integration**: Querying live delivery availability, tracking orders, and receiving personalized product recommendations via structured AI context protocols.
+      - **Responsive Chat Interface**: Built using React, TypeScript, Tailwind CSS, and Node.js for seamless desktop and mobile accessibility.
+      
+      Participating in this challenge expanded my understanding of next-generation LLM tooling, agent workflows, and real-time e-commerce API integrations!
+    `,
+    tags: ['Kapruka MCP', 'AI Agent', 'React', 'TypeScript', 'Node.js']
+  },
+  {
+    id: 2,
+    title: 'Building Multi-Agent Architectures with Django REST & React',
+    category: 'Technical Journals',
+    date: 'May 2026',
+    readTime: '5 min read',
+    summary: 'How my team designed an AI Hospital Receptionist System using multi-agent task delegation and seamless REST API orchestration.',
+    content: `
+      As Team Lead for our final-year project, we set out to automate hospital appointment scheduling and patient coordination using AI agents.
+      
+      ### Core System Components:
+      1. **Multi-Agent Coordinator**: Orchestrates specialized agents for appointment validation, doctor schedule lookups, and patient intake.
+      2. **Django REST Backend**: Secure Python backend handling data persistence across PostgreSQL and MongoDB databases.
+      3. **React Dynamic Dashboard**: Provides hospital administration and patients real-time updates without page reloads.
+      
+      This project reinforced the importance of clear API contracts and robust error handling in multi-agent asynchronous workflows.
+    `,
+    tags: ['Multi-Agent AI', 'Django REST', 'React', 'Full Stack', 'System Architecture']
+  },
+  {
+    id: 3,
+    title: 'SLIIT Codefest & NETCOM Competition Journey',
+    category: 'Events',
+    date: 'Nov 2025',
+    readTime: '3 min read',
+    summary: 'Recap of competing in SLIIT Codefest NETCOM & ALGOTHAN hackathons, focusing on competitive problem solving and network engineering.',
+    content: `
+      Competing in SLIIT Codefest allowed me to test system engineering and algorithmic problem-solving skills under strict time limits.
+      
+      ### Highlights & Awards:
+      - **SLIIT Codefest NETCOM Merit Award**: Demonstrated advanced networking concepts and cloud infrastructure design.
+      - **SLIIT Codefest ALGOTHAN Merit Award**: Efficient algorithm implementation and data structures optimization.
+      - **Q4US Codeart Challenge Winner**: Creative solution design and frontend interactive execution.
+      
+      Collaborating under pressure reinforced my passion for continuous tech learning and team leadership!
+    `,
+    tags: ['Hackathons', 'SLIIT Codefest', 'Awards', 'Networking', 'Problem Solving']
+  },
+  {
+    id: 4,
+    title: 'Integrating Interactive 3D Canvas & WebGL in Modern Portfolios',
+    category: 'Technical Journals',
+    date: 'Jan 2026',
+    readTime: '4 min read',
+    summary: 'A deep dive into using Three.js, dynamic particle systems, and lightweight shaders to elevate web UI aesthetics without sacrificing speed.',
+    content: `
+      Modern web development is moving towards immersive, dynamic user interfaces. Adding 3D elements can dramatically enhance visual appeal when implemented thoughtfully.
+      
+      ### Best Practices for WebGL Canvas:
+      - **Asynchronous & Lazy Loading**: Load 3D assets lazily so initial page load remains instant.
+      - **Graceful Fallbacks**: Ensure mobile users on low-power devices experience smooth 60fps animations.
+      - **Subtle Ambient Motion**: Avoid overwhelming the user; use 3D shapes to accent key sections like interactive skill globes and tech cards.
+    `,
+    tags: ['Three.js', 'WebGL', 'Frontend', 'Web Animation', 'UI/UX']
+  }
+];
 
 const useReveal = () => {
   useEffect(() => {
@@ -229,53 +314,13 @@ export default function App() {
   const [projectFilter, setProjectFilter] = useState('All');
   const [showBackToTop, setShowBackToTop] = useState(false);
 
-  // Cursor refs — direct DOM mutation, zero React re-renders
-  const dotRef = useRef(null);
-  const ringRef = useRef(null);
+  const [blogCategory, setBlogCategory] = useState('All');
+  const [blogSearch, setBlogSearch] = useState('');
+  const [activeBlogPost, setActiveBlogPost] = useState(null);
 
   useEffect(() => {
     document.body.className = darkMode ? '' : 'light';
   }, [darkMode]);
-
-  // Smooth cursor — pure DOM, no React state
-  useEffect(() => {
-    let mouse = { x: -200, y: -200 };
-    let ring  = { x: -200, y: -200 };
-    let raf;
-
-    const onMove = (e) => {
-      mouse.x = e.clientX;
-      mouse.y = e.clientY;
-      if (dotRef.current) {
-        dotRef.current.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
-      }
-    };
-
-    const animate = () => {
-      ring.x += (mouse.x - ring.x) * 0.14;
-      ring.y += (mouse.y - ring.y) * 0.14;
-      if (ringRef.current) {
-        ringRef.current.style.transform = `translate(${ring.x}px, ${ring.y}px)`;
-      }
-      raf = requestAnimationFrame(animate);
-    };
-
-    window.addEventListener('mousemove', onMove, { passive: true });
-    raf = requestAnimationFrame(animate);
-    return () => {
-      window.removeEventListener('mousemove', onMove);
-      cancelAnimationFrame(raf);
-    };
-  }, []);
-
-  // Hover state for cursor scale via class
-  useEffect(() => {
-    const on  = () => document.body.classList.add('cursor-hover');
-    const off = () => document.body.classList.remove('cursor-hover');
-    const targets = document.querySelectorAll('a,button,input,textarea,.skill-tile,.proj-card,.contact-card,.achievement-card,.edu-card,.cert-card');
-    targets.forEach(t => { t.addEventListener('mouseenter', on); t.addEventListener('mouseleave', off); });
-    return () => targets.forEach(t => { t.removeEventListener('mouseenter', on); t.removeEventListener('mouseleave', off); });
-  });
 
   useEffect(() => {
     const onScroll = () => {
@@ -342,6 +387,7 @@ export default function App() {
     { id: 'experience', label: 'Experience' },
     { id: 'education', label: 'Education' },
     { id: 'projects', label: 'Projects' },
+    { id: 'blogs', label: 'Blogs' },
     { id: 'achievements', label: 'Awards' },
     { id: 'contact', label: 'Contact' }
   ];
@@ -395,9 +441,7 @@ export default function App() {
 
       <Preloader onFinish={handleFinish} />
 
-      {/* Custom Cursor — DOM refs, no React state, no re-renders */}
-      <div ref={dotRef}  className="cursor-dot" />
-      <div ref={ringRef} className="cursor-ring" />
+
 
       <Lightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
 
@@ -408,19 +452,6 @@ export default function App() {
         <a href="#hero" className="nav-brand">
           <span className="nav-name">Jeyarakavan Jeyakandan</span>
         </a>
-        <ul className={`nav-links${mobileNavOpen ? ' open' : ''}`}>
-          {navItems.map(item => (
-            <li key={item.id}>
-              <a
-                href={`#${item.id}`}
-                className={activeSection === item.id ? 'active' : ''}
-                onClick={() => setMobileNavOpen(false)}
-              >
-                {item.label}
-              </a>
-            </li>
-          ))}
-        </ul>
         <div className="nav-actions">
           <button className="theme-toggle" onClick={() => setDarkMode(!darkMode)} title={darkMode ? 'Switch to Light' : 'Switch to Dark'} aria-label="Toggle theme">
             <span className="theme-toggle-icon">{darkMode ? '🌙' : '☀️'}</span>
@@ -440,6 +471,20 @@ export default function App() {
         </div>
       </nav>
 
+      {/* Mobile nav drawer — rendered OUTSIDE nav to escape backdrop-filter stacking context */}
+      <ul className={`nav-links${mobileNavOpen ? ' open' : ''}`}>
+        {navItems.map(item => (
+          <li key={item.id}>
+            <a
+              href={`#${item.id}`}
+              className={activeSection === item.id ? 'active' : ''}
+              onClick={() => setMobileNavOpen(false)}
+            >
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
       {mobileNavOpen && (
         <div className="nav-mobile-overlay" onClick={() => setMobileNavOpen(false)} aria-hidden="true" />
       )}
@@ -460,7 +505,7 @@ export default function App() {
             <p className="hero-typewriter">
               {typewriterText}<span className="typewriter-cursor" />
             </p>
-            <p className="hero-desc">{CV.summary.slice(0, 230)}…</p>
+            <p className="hero-desc">{CV.summary.slice(0, 240)}…</p>
             <div className="hero-cta">
               <a href="#projects" className="btn-primary">View Projects</a>
               <a href="#contact" className="btn-outline">Get In Touch</a>
@@ -487,18 +532,6 @@ export default function App() {
         </div>
       </section>
 
-      <div className="marquee-section">
-        <div className="marquee-track">
-          {['React.js', 'Node.js', 'Django', 'Python', 'Java', 'MySQL', 'MongoDB', 'Firebase', 'JavaScript', 'Bootstrap', 'Git/GitHub', 'REST API', 'Agile/Scrum', 'Power BI',
-            'React.js', 'Node.js', 'Django', 'Python', 'Java', 'MySQL', 'MongoDB', 'Firebase', 'JavaScript', 'Bootstrap', 'Git/GitHub', 'REST API', 'Agile/Scrum', 'Power BI'
-          ].map((t, i) => (
-            <div className="marquee-item" key={i}>
-              <span className="marquee-dot">◆</span>{t}
-            </div>
-          ))}
-        </div>
-      </div>
-
       <section id="about">
         <div className="section-inner">
           <div className="about-full reveal">
@@ -509,7 +542,7 @@ export default function App() {
               <div className="about-text-col">
                 <p className="about-p">{CV.summary}</p>
                 <p className="about-p">
-                  I am currently in the 3rd year of my BSc (Hons) in Computer Science at SLIIT Northern Uni. My internship at HABB (PVT) Ltd gave me hands-on experience in Agile environments, building real-world features that directly impacted business workflows.
+                  I am currently in the 3rd year of my BSc (Hons) in Computer Science at University of Bedfordshire (delivered at SLIIT Northern Uni). My internship at HABB (Pvt) Ltd gave me hands-on experience in Agile environments, building real-world features that directly impacted business workflows.
                 </p>
                 <p className="about-p">
                   Beyond coding, I am a Scout with a President's Award — a recognition of leadership, community service, and dedication.
@@ -522,19 +555,19 @@ export default function App() {
                     <div className="stat-label">Years Coding</div>
                   </div>
                   <div className="stat-box">
-                    <div className="stat-num">5+</div>
-                    <div className="stat-label">Projects</div>
+                    <div className="stat-num">3+</div>
+                    <div className="stat-label">Core Projects</div>
                   </div>
                   <div className="stat-box">
-                    <div className="stat-num">4</div>
+                    <div className="stat-num">5</div>
                     <div className="stat-label">Awards</div>
                   </div>
                 </div>
                 <div className="about-info-list">
                   <div className="about-info-item"><span>Degree</span><span>BSc (Hons) Computer Science</span></div>
-                  <div className="about-info-item"><span>University</span><span>SLIIT Northern Uni</span></div>
+                  <div className="about-info-item"><span>University</span><span>Bedfordshire / SLIIT Northern</span></div>
+                  <div className="about-info-item"><span>Higher Diploma</span><span>SCU (Jun 2024 - Jun 2026)</span></div>
                   <div className="about-info-item"><span>Location</span><span>Jaffna, Sri Lanka</span></div>
-                  <div className="about-info-item"><span>Availability</span><span>Open to Opportunities</span></div>
                   <div className="about-info-item"><span>Languages</span><span>Tamil · English</span></div>
                 </div>
               </div>
@@ -548,12 +581,119 @@ export default function App() {
           <div className="reveal" style={{ textAlign: 'center' }}>
             <span className="section-label" style={{ justifyContent: 'center' }}>// Expertise</span>
             <h2 className="section-title">Skills &amp; <em>Technologies</em></h2>
-            <p className="section-desc" style={{ margin: '0 auto' }}>Drag your eyes across the globe — each orbiting tile is a technology I work with daily.</p>
+            <p className="section-desc" style={{ margin: '0 auto' }}>Explore the interactive 3D skill globe or browse the detailed tech stack matrix below.</p>
             <div className="section-divider" style={{ margin: '1.5rem auto 2rem' }} />
           </div>
           <Suspense fallback={<div style={{ height: 420 }} />}>
             <SkillGlobe logos={logos} skills={CV.skills} />
           </Suspense>
+
+          {/* Interactive Skills Table Matrix */}
+          <div className="skills-table-wrapper reveal" style={{ marginTop: '3.5rem' }}>
+            <h3 className="skills-table-title">
+              <Sparkles size={18} style={{ color: 'var(--blue-4)' }} /> Comprehensive Technical Skills Matrix
+            </h3>
+            <div className="table-responsive">
+              <table className="skills-matrix-table">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Technologies &amp; Frameworks</th>
+                    <th>Proficiency</th>
+                    <th>Applied Key Projects</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td className="cat-cell"><strong>Frontend Development</strong></td>
+                    <td>
+                      <div className="tech-chip-group">
+                        <span className="tech-badge">React.js</span>
+                        <span className="tech-badge">TypeScript</span>
+                        <span className="tech-badge">JavaScript (ES6+)</span>
+                        <span className="tech-badge">HTML5 / CSS3</span>
+                        <span className="tech-badge">Tailwind CSS</span>
+                        <span className="tech-badge">Bootstrap</span>
+                        <span className="tech-badge">Figma</span>
+                      </div>
+                    </td>
+                    <td><span className="prof-tag level-advanced">Advanced</span></td>
+                    <td>Kapruka MCP Agent, AI Receptionist, HABB Internship</td>
+                  </tr>
+                  <tr>
+                    <td className="cat-cell"><strong>Backend Engineering</strong></td>
+                    <td>
+                      <div className="tech-chip-group">
+                        <span className="tech-badge">Node.js</span>
+                        <span className="tech-badge">Django</span>
+                        <span className="tech-badge">Python</span>
+                        <span className="tech-badge">Java</span>
+                        <span className="tech-badge">PHP</span>
+                        <span className="tech-badge">REST APIs</span>
+                        <span className="tech-badge">Model Context Protocol (MCP)</span>
+                      </div>
+                    </td>
+                    <td><span className="prof-tag level-advanced">Advanced</span></td>
+                    <td>AI Receptionist Backend, Kapruka Agent Challenge</td>
+                  </tr>
+                  <tr>
+                    <td className="cat-cell"><strong>Databases &amp; Storage</strong></td>
+                    <td>
+                      <div className="tech-chip-group">
+                        <span className="tech-badge">MySQL</span>
+                        <span className="tech-badge">MongoDB</span>
+                        <span className="tech-badge">PostgreSQL</span>
+                        <span className="tech-badge">SQLite</span>
+                        <span className="tech-badge">Firebase</span>
+                      </div>
+                    </td>
+                    <td><span className="prof-tag level-proficient">Proficient</span></td>
+                    <td>HABB Workflow Systems, Hospital Record Database</td>
+                  </tr>
+                  <tr>
+                    <td className="cat-cell"><strong>3D Animation &amp; Graphics</strong></td>
+                    <td>
+                      <div className="tech-chip-group">
+                        <span className="tech-badge">Three.js</span>
+                        <span className="tech-badge">WebGL Canvas</span>
+                        <span className="tech-badge">CSS Keyframes</span>
+                        <span className="tech-badge">Interactive 3D UI</span>
+                      </div>
+                    </td>
+                    <td><span className="prof-tag level-proficient">Proficient</span></td>
+                    <td>Portfolio Interactive Globe &amp; 3D Visualizers</td>
+                  </tr>
+                  <tr>
+                    <td className="cat-cell"><strong>Tools &amp; Platforms</strong></td>
+                    <td>
+                      <div className="tech-chip-group">
+                        <span className="tech-badge">Git / GitHub</span>
+                        <span className="tech-badge">VS Code</span>
+                        <span className="tech-badge">Netlify</span>
+                        <span className="tech-badge">Power BI</span>
+                        <span className="tech-badge">Android Studio</span>
+                      </div>
+                    </td>
+                    <td><span className="prof-tag level-proficient">Proficient</span></td>
+                    <td>CI/CD Deployment, Version Control, Analytics</td>
+                  </tr>
+                  <tr>
+                    <td className="cat-cell"><strong>Project &amp; Soft Skills</strong></td>
+                    <td>
+                      <div className="tech-chip-group">
+                        <span className="tech-badge">Agile / Scrum</span>
+                        <span className="tech-badge">Sprint Planning</span>
+                        <span className="tech-badge">Problem Solving</span>
+                        <span className="tech-badge">Team Leadership</span>
+                      </div>
+                    </td>
+                    <td><span className="prof-tag level-experienced">Experienced</span></td>
+                    <td>HABB Internship Team, Group Project Leadership</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -613,10 +753,21 @@ export default function App() {
           <div className="edu-grid">
             {CV.education.map((edu, i) => (
               <div className="edu-card reveal" key={i} style={{ transitionDelay: `${i * 0.1}s` }}>
-                <div className="edu-icon"><GraduationCap size={22} /></div>
+                <div className="edu-card-top">
+                  {edu.logo ? (
+                    <div className="edu-logo-box">
+                      <img src={edu.logo} alt={edu.institution} className="edu-inst-logo" />
+                    </div>
+                  ) : (
+                    <div className="edu-icon"><GraduationCap size={22} /></div>
+                  )}
+                  <div className="edu-year">{edu.year}</div>
+                </div>
                 <div className="edu-degree">{edu.degree}</div>
-                <div className="edu-institution">{edu.institution}</div>
-                <div className="edu-year">{edu.year}</div>
+                <div className="edu-institution-line">
+                  <strong>{edu.institution}</strong> {edu.campus && <span className="edu-campus-text">{edu.campus}</span>}
+                </div>
+                {edu.desc && <p className="edu-desc">{edu.desc}</p>}
               </div>
             ))}
           </div>
@@ -644,7 +795,7 @@ export default function App() {
           </div>
           {/* Project Filter Bar */}
           <div className="projects-filter-bar reveal">
-            {['All', 'AI/ML', 'Full Stack', 'Frontend'].map(cat => (
+            {['All', 'AI/ML', 'Full Stack'].map(cat => (
               <button
                 key={cat}
                 className={`filter-btn${projectFilter === cat ? ' active' : ''}`}
@@ -656,9 +807,8 @@ export default function App() {
             {CV.projects
               .filter(proj => {
                 if (projectFilter === 'All') return true;
-                if (projectFilter === 'AI/ML') return proj.type?.toLowerCase().includes('ai') || proj.type?.toLowerCase().includes('ml') || proj.type?.toLowerCase().includes('intelligent');
-                if (projectFilter === 'Full Stack') return proj.type?.toLowerCase().includes('full stack') || proj.type?.toLowerCase().includes('fullstack');
-                if (projectFilter === 'Frontend') return proj.type?.toLowerCase().includes('frontend') || proj.type?.toLowerCase().includes('web app');
+                if (projectFilter === 'AI/ML') return proj.type?.toLowerCase().includes('ai') || proj.type?.toLowerCase().includes('ml') || proj.type?.toLowerCase().includes('challenge');
+                if (projectFilter === 'Full Stack') return proj.type?.toLowerCase().includes('full stack') || proj.type?.toLowerCase().includes('fullstack') || proj.type?.toLowerCase().includes('team lead');
                 return true;
               })
               .map((proj, i) => (
@@ -697,11 +847,6 @@ export default function App() {
                         <ExternalLink size={13} /> Live Demo
                       </a>
                     )}
-                    {proj.demo_url && (
-                      <a href={proj.demo_url} target="_blank" rel="noopener noreferrer" className="proj-link proj-link-demo">
-                        <ExternalLink size={13} /> Live Demo
-                      </a>
-                    )}
                   </div>
                 </div>
               </div>
@@ -709,6 +854,109 @@ export default function App() {
           </div>
         </div>
       </section>
+
+      {/* Blogs & Journals Section */}
+      <section id="blogs">
+        <div className="section-inner">
+          <div className="reveal">
+            <span className="section-label">// Journals &amp; Activity</span>
+            <h2 className="section-title">Blogs, Workshops &amp; <em>Events</em></h2>
+            <div className="section-divider" />
+            <p className="section-desc">My technical journal documenting workshops, hackathons, software architecture insights, and tech events.</p>
+          </div>
+
+          <div className="blogs-controls reveal">
+            <div className="blogs-categories">
+              {['All', 'Workshops', 'Events', 'Technical Journals'].map(cat => (
+                <button
+                  key={cat}
+                  className={`filter-btn${blogCategory === cat ? ' active' : ''}`}
+                  onClick={() => setBlogCategory(cat)}
+                >{cat}</button>
+              ))}
+            </div>
+            <div className="blogs-search-wrap">
+              <Search size={15} className="search-icon" />
+              <input
+                type="text"
+                placeholder="Search blog posts or topics..."
+                value={blogSearch}
+                onChange={e => setBlogSearch(e.target.value)}
+                className="blogs-search-input"
+              />
+            </div>
+          </div>
+
+          <div className="blogs-grid">
+            {BLOG_POSTS
+              .filter(post => {
+                const matchCat = blogCategory === 'All' || post.category === blogCategory;
+                const matchSearch = blogSearch === '' || 
+                  post.title.toLowerCase().includes(blogSearch.toLowerCase()) ||
+                  post.summary.toLowerCase().includes(blogSearch.toLowerCase()) ||
+                  post.tags.some(t => t.toLowerCase().includes(blogSearch.toLowerCase()));
+                return matchCat && matchSearch;
+              })
+              .map((post, i) => (
+                <article className="blog-card reveal" key={post.id} style={{ transitionDelay: `${i * 0.1}s` }}>
+                  <div className="blog-card-meta">
+                    <span className="blog-badge">{post.category}</span>
+                    <span className="blog-date"><Calendar size={12} /> {post.date}</span>
+                    <span className="blog-time"><Clock size={12} /> {post.readTime}</span>
+                  </div>
+                  <h3 className="blog-card-title">{post.title}</h3>
+                  <p className="blog-card-summary">{post.summary}</p>
+                  <div className="blog-card-tags">
+                    {post.tags.map(t => <span key={t} className="blog-tag">#{t}</span>)}
+                  </div>
+                  <button className="btn-blog-read" onClick={() => setActiveBlogPost(post)}>
+                    Read Entry <ArrowRight size={14} />
+                  </button>
+                </article>
+              ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Detail Modal */}
+      {activeBlogPost && (
+        <div className="blog-modal-overlay" onClick={() => setActiveBlogPost(null)}>
+          <div className="blog-modal-content" onClick={e => e.stopPropagation()}>
+            <button className="blog-modal-close" onClick={() => setActiveBlogPost(null)}>
+              <X size={20} />
+            </button>
+            <div className="blog-modal-header">
+              <span className="blog-badge">{activeBlogPost.category}</span>
+              <div className="blog-modal-meta">
+                <span><Calendar size={13} /> {activeBlogPost.date}</span>
+                <span><Clock size={13} /> {activeBlogPost.readTime}</span>
+              </div>
+              <h2 className="blog-modal-title">{activeBlogPost.title}</h2>
+              <div className="blog-card-tags" style={{ marginTop: '0.75rem' }}>
+                {activeBlogPost.tags.map(t => <span key={t} className="blog-tag">#{t}</span>)}
+              </div>
+            </div>
+            <div className="blog-modal-body">
+              {activeBlogPost.content.split('\n\n').map((paragraph, idx) => {
+                const trimmed = paragraph.trim();
+                if (trimmed.startsWith('### ')) {
+                  return <h3 key={idx} className="blog-h3">{trimmed.replace('### ', '')}</h3>;
+                }
+                if (trimmed.startsWith('- ')) {
+                  return (
+                    <ul key={idx} className="blog-ul">
+                      {trimmed.split('\n').map((item, itemIdx) => (
+                        <li key={itemIdx}>{item.replace('- ', '')}</li>
+                      ))}
+                    </ul>
+                  );
+                }
+                return <p key={idx} className="blog-p">{trimmed}</p>;
+              })}
+            </div>
+          </div>
+        </div>
+      )}
 
       <section id="achievements">
         <div className="section-inner">
@@ -790,7 +1038,7 @@ export default function App() {
               <h2 className="section-title">Get In <em>Touch</em></h2>
               <div className="section-divider" />
               <p className="section-desc">
-                Open to full-stack development roles, AI/ML projects, research collaborations, and internship opportunities. Let's build something impactful together.
+                Open to full-stack development roles, AI/ML projects, research collaborations, and software engineering opportunities. Let's build something impactful together.
               </p>
               <div className="contact-cards">
                 <a href={`mailto:${CV.email}`} className="contact-card">
@@ -825,7 +1073,7 @@ export default function App() {
                   <div className="contact-icon"><MapPin size={20} style={{ color: 'var(--blue-4)' }} /></div>
                   <div>
                     <div className="contact-label">Location</div>
-                    <div className="contact-value">{CV.location} · Open to Remote</div>
+                    <div className="contact-value">{CV.location}</div>
                   </div>
                 </div>
               </div>
