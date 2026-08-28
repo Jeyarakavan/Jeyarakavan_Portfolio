@@ -384,7 +384,6 @@ export default function App() {
 
   const navItems = [
     { id: 'about', label: 'About' },
-    { id: 'ai-assistant', label: 'AI Assistant' },
     { id: 'skills', label: 'Skills' },
     { id: 'experience', label: 'Experience' },
     { id: 'education', label: 'Education' },
