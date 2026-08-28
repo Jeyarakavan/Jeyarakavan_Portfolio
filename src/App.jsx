@@ -538,15 +538,15 @@ export default function App() {
       </section>
 
       {/* AI Portfolio Assistant Section directly under Profile */}
-      <section id="ai-assistant" style={{ padding: '3.5rem 5vw 2rem' }}>
+      <section id="ai-assistant" style={{ padding: '2.25rem 5vw 1.75rem' }}>
         <div className="section-inner">
-          <div className="reveal" style={{ textAlign: 'center', marginBottom: '2rem' }}>
+          <div className="reveal" style={{ textAlign: 'center', marginBottom: '1.25rem' }}>
             <span className="section-label" style={{ justifyContent: 'center' }}>// Interactive AI</span>
             <h2 className="section-title">Ask My <em>AI Assistant</em></h2>
-            <p className="section-desc" style={{ margin: '0 auto', maxWidth: '640px' }}>
+            <p className="section-desc" style={{ margin: '0 auto', maxWidth: '560px', fontSize: '0.85rem' }}>
               Have questions about my technical background, projects, internship experience, or skills? Ask my custom AI assistant below!
             </p>
-            <div className="section-divider" style={{ margin: '1.25rem auto 0' }} />
+            <div className="section-divider" style={{ margin: '1rem auto 0' }} />
           </div>
           <div className="reveal">
             <AIChatBot embedded={true} />
